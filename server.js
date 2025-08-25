@@ -1,3 +1,5 @@
+// server.js - Updated version with dotenv
+require('dotenv').config(); // Add this at the very top
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -11,8 +13,13 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname)));
 
-// MongoDB Connection
-const MONGODB_URI = process.env.MONGODB_URI || 'your-mongodb-connection-string-here';
+// MongoDB Connection - Use environment variable
+const MONGODB_URI = process.env.MONGODB_URI;
+
+if (!MONGODB_URI) {
+  console.error('Error: MONGODB_URI is not defined in environment variables');
+  process.exit(1);
+}
 
 mongoose.connect(MONGODB_URI, {
   useNewUrlParser: true,
@@ -97,4 +104,5 @@ app.get('/', (req, res) => {
 // Start server
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
+  console.log(`MongoDB URI: ${MONGODB_URI ? 'Set correctly' : 'Not set'}`);
 });
